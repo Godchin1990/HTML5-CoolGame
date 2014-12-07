@@ -63,7 +63,7 @@
 </head>
 <body>
 <div class="panel">
-		<label for="score">得分: </label><em id="score">0</em></p>
+		GO
 </div>
 <div id="holder">
 	<div id="doc" class="doc">
@@ -101,7 +101,26 @@
 			return true;
 		};
 		this.eat = function(dir){
-			
+			var x,y;
+			x = this.x;
+			y = this.y;
+			switch(dir){
+				case -1:	x=this.x-1;break;	//左
+				case +1:	x=this.x+1;break;	//右
+				case 2: 	y=this.y+1;break;	//下
+				case 0:		y=this.y-1;break;	
+				break;
+				default: return;
+			}
+			if($(pix[x+y*18]).hasClass('x')){
+				return "eat";
+			}
+			else if($(pix[x+y*18]).hasClass('X')||x<0||x>17||y<0||y>17){
+				return "die";
+			}
+			else{
+				return "nothing";
+			}
 		};
 
 		this.destory = function(){
@@ -110,6 +129,7 @@
 			this.run = null;
 		};
 	}
+	GAMEOVER = 0;
 	var head = new Snake_Block([8,9]);
 	head.show();
 	var end  = new Snake_Block([9,9]);
@@ -119,8 +139,24 @@
 	dir = -1;
 	dir_pre = -1;
 	run();
+	randegg();
+	
 	/**/
+	function randegg(){
+		var x = Math.floor(Math.random()*17);
+		var y = Math.floor(Math.random()*17);
+		while($(pix[x+y*18]).hasClass('X')){
+			var x = Math.floor(Math.random()*17);
+			var y = Math.floor(Math.random()*17);
+		}
+		$(pix[x+y*18]).addClass('x');
+		$(".panel")[0].innerHTML=x+' '+y;
+		return;
+			
+	}
+	
 	function run(){
+		
 		var x = head.x;
 		var y = head.y;
 		switch(dir){
@@ -131,41 +167,76 @@
 			break;
 			default: return;
 		}
-		dir_pre = dir;
-		var node = new Snake_Block([x,y]);
-		node.show();
-		nodes.push(node);
-		head.pre = node;
-		head = node;
-		end.hide();
-		end = end.pre;
-		timeOut = setTimeout(run, 900/2 );
+		
+		if(head.eat(dir)=="eat"){
+			var node = new Snake_Block([x,y]);
+			node.show();
+			$(pix[x+y*18]).removeClass('x');
+			head.pre = node;
+			head = node;
+			randegg();
+		}
+		else if(head.eat(dir)=="die"){
+			$(".panel")[0].innerHTML = "GAME OVER";
+			GAMEOVER = 1;
+			return;
+		}
+		else{
+			var node = new Snake_Block([x,y]);
+			node.show();
+			head.pre = node;
+			head = node;
+			end.hide();
+			end = end.pre;
+		}
+		timeOut = setTimeout(run, 900/10 );
+				
 	};
 	$(document).on('keydown', function(e){
 		if( e.keyCode === 32 ){
 			pause = !pause; $('#pause')[pause?'show':'hide']();
 		}else{
-			dir = e.keyCode - 38;
+			if(GAMEOVER==1)return;
+			var inverse_flag = 0;
+			keybound = e.keyCode - 38;
 			var x = head.x;
 			var y = head.y;
-			switch(dir){
-				case -1:	if(dir_pre==1)	{dir = dir_pre;break;}x--;break;	//左
-				case +1:	if(dir_pre==-1)	{dir = dir_pre;break;}x++;break;	//右
-				case 2: 	if(dir_pre==0)	{dir = dir_pre;break;}y++;break;	//下
-				case 0:		if(dir_pre==2)	{dir = dir_pre;break;}y--;break;	
+			switch(keybound){
+				case -1:	if(dir==1)	{inverse_flag = 1;dir = 1;x--;break;}dir=-1;x--;break;	//左
+				case +1:	if(dir==-1)	{inverse_flag = 1;dir = -1;x++;break;}dir=1;x++;break;	//右
+				case 2: 	if(dir==0)	{inverse_flag = 1;dir = 0;y--;break;}dir=2;y++;break;	//下
+				case 0:		if(dir==2)	{inverse_flag = 1;dir = 2;y++;break;}dir=0;y--;break;	
 				break;
 				default: return;
 			}
-			if(dir == dir_pre){}
+			if(inverse_flag==1){
+				//反方向什么也不做
+			}
 			else{
-				dir_pre = dir;
-				var node = new Snake_Block([x,y]);
-				node.show();
-				nodes.push(node);
-				head.pre = node;
-				head = node;
-				end.hide();
-				end = end.pre;
+				clearTimeout(timeOut);
+				if(head.eat(dir)=="eat"){
+					var node = new Snake_Block([x,y]);
+					node.show();
+					$(pix[x+y*18]).removeClass('x');
+					head.pre = node;
+					head = node;
+					randegg();
+				}
+				else if(head.eat(dir)=="die"){
+					$(".panel")[0].innerHTML ="GAME OVER";
+					GAMEOVER = 1;
+					return;
+				}
+				else{
+					var node = new Snake_Block([x,y]);
+					node.show();
+					head.pre = node;
+					head = node;
+					end.hide();
+					end = end.pre;
+				}
+				timeOut=setTimeout(run, 900/10 );
+			
 			}
 			
 		}
