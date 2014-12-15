@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="author" content="Tencent.AlloyTeam.Jetyu" />
+    <meta name="copyright" content="Tencent.AlloyTeam" />
+    <title>Tencent AlloyTeam - 腾讯 Web 前端团队</title>
+    <link href="./style/main.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        // 测速
+        var _speedMark = new Date();
+
+
+        // 倒计时
+        var getLastDay = function(time){
+            var now = new Date();
+            var lastTime = time.getTime() - now.getTime();    
+            var lastDay = Math.ceil(lastTime / (1000 * 60 * 60 * 24));    
+            if (lastDay < 0){
+                lastDay = 0;
+            }
+            return lastDay;
+        }
+        
+
+       
+
+        // 呵呵，Z.P.
+        var lastDay6= getLastDay(new Date("2015-3-20"));
+        // 呵呵，A.L.
+        var lastDay7= getLastDay(new Date("2015-3-29"));
+        // 呵呵，IP
+        var lastDay8= getLastDay(new Date("2015-5-21"));
+        // 呵呵，T.S.
+        var lastDay9= getLastDay(new Date("2015-5-22"));
+        // 呵呵，A.A.
+        var lastDay10= getLastDay(new Date("2015-12-22"));
+
+        
+    </script>
+</head>
+<body>
+    <div class="title">KFC GAME<script>document.write(new Date().getFullYear());</script></div>
+    <img class="logo" src="images/me.png" />
+    <div class="breath" title="One Team, One Dream! ">light</div>
+
+    <div class="workListBoard">
+        <h3>Works List</h3>
+        <ul class="workList">
+            <li><a target="_blank" href="GAME/Tetris/index.html">Tetris</a></li>
+            <li><a target="_blank" href="GAME/CrazySnake/index.html">CrazySnake<span class="new">新</span></a></li>
+            
+        </ul>
+    </div>
+    <div class="copyright">Copyright &copy; <script>document.write(new Date().getFullYear());</script> <a href="http://zhko11993.github.io/" target="_blank">ZHKO1</a>.使用腾讯模板.</div>
+
+    <script type="text/javascript" src="http://tajs.qq.com/stats?sId=24711241" charset="UTF-8"></script>
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-23019343-9']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+<style>
+*{
+	margin: 0;
+	padding: 0;
+}
+#holder{
+	width:504px;
+	margin: 20px auto;
+	background: #748b7b;
+	padding: 4px 2px 2px 4px;
+	border: 4px solid #333;
+}
+.doc{
+	overflow: hidden;
+	position: relative;
+}
+.doc span{
+	position: absolute;
+	width: 14px;
+	height: 14px;
+	padding: 4px;
+	margin: 0 2px 2px 0;
+	background: #748b7b;
+	border: 2px solid #666;
+}
+.doc span i{
+	display: block;
+	width: 14px;
+	height: 14px;
+	background: #666;
+}
+.doc span.x, .doc span.X{
+	border-color: #000;
+}
+.doc span.x i,.doc span.X i{
+	background: #000;
+}
+.panel{
+	width: 100%;
+	left: 50%;
+	top: 10px;
+	line-height: 24px;
+}
+#pause{
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	background: rgba(6,6,6,.4);
+	color: #fff;
+	font: bold 72px/5 "Arial";
+	text-align: center;
+	display: none;
+}
+</style>
+</head>
+<body>
+<div class="panel">
+		GO
+</div>
+<div id="holder">
+	<div id="doc" class="doc">
+		
+	</div>
+	
+</div>
+<div id="pause">PAUSE</div>
+<script src="http://apps.bdimg.com/libs/jquery/1.9.0/jquery.min.js"></script>
+<script>
+//DREAMS come true
+//lovely
+(function($){
+	
+	var doc = $('#doc'), score = $('#score');
+	bg = [], height = 18;//height是有十八行
+	doc.height( height*28 )//每行的高度
+	for (var i = 0; i < height; i++) {
+		for (var j = 0; j < 18; j++){
+			bg.push( 
+			'<span style="top:'+(i*28)+'px;left:'+(j*28)+'px;"><i></i></span>' );
+		}
+	};
+	doc.html( bg.join('') ); // 初始化背景
+	var pix = doc.children();
+	function Snake_Block(map){
+		this.x = map[0];
+		this.y = map[1];
+		this.show = function(){
+			$(pix[this.x+this.y*18]).addClass('X');
+			return true;
+		};
+		this.hide = function(){
+			$(pix[this.x+this.y*18]).removeClass('X');//先把所有的都清除掉
+			return true;
+		};
+		this.eat = function(dir){
+			var x,y;
+			x = this.x;
+			y = this.y;
+			switch(dir){
+				case -1:	x=this.x-1;break;	//左
+				case +1:	x=this.x+1;break;	//右
+				case 2: 	y=this.y+1;break;	//下
+				case 0:		y=this.y-1;break;	
+				break;
+				default: return;
+			}
+			if($(pix[x+y*18]).hasClass('x')){
+				return "eat";
+			}
+			else if($(pix[x+y*18]).hasClass('X')||x<0||x>17||y<0||y>17){
+				return "die";
+			}
+			else{
+				return "nothing";
+			}
+		};
+
+		this.destory = function(){
+			pix.filter('.x').addClass('X').removeClass('x');
+			this.show = null;
+			this.run = null;
+		};
+	}
+	GAMEOVER = 0;
+	var head = new Snake_Block([8,9]);
+	head.show();
+	var end  = new Snake_Block([9,9]);
+	end.show();
+	end.pre = head;
+	var nodes = [];
+	dir = -1;
+	dir_pre = -1;
+	run();
+	randegg();
+	
+	/**/
+	function randegg(){
+		var x = Math.floor(Math.random()*17);
+		var y = Math.floor(Math.random()*17);
+		while($(pix[x+y*18]).hasClass('X')){
+			var x = Math.floor(Math.random()*17);
+			var y = Math.floor(Math.random()*17);
+		}
+		$(pix[x+y*18]).addClass('x');
+		$(".panel")[0].innerHTML=x+' '+y;
+		return;
+			
+	}
+	
+	function run(){
+		
+		var x = head.x;
+		var y = head.y;
+		switch(dir){
+			case -1:	x--;break;	//左
+			case +1:	x++;break;	//右
+			case 2: 	y++;break;	//下
+			case 0:		y--;break;	
+			break;
+			default: return;
+		}
+		
+		if(head.eat(dir)=="eat"){
+			var node = new Snake_Block([x,y]);
+			node.show();
+			$(pix[x+y*18]).removeClass('x');
+			head.pre = node;
+			head = node;
+			randegg();
+		}
+		else if(head.eat(dir)=="die"){
+			$(".panel")[0].innerHTML = "GAME OVER";
+			GAMEOVER = 1;
+			return;
+		}
+		else{
+			var node = new Snake_Block([x,y]);
+			node.show();
+			head.pre = node;
+			head = node;
+			end.hide();
+			end = end.pre;
+		}
+		timeOut = setTimeout(run, 900/10 );
+				
+	};
+	$(document).on('keydown', function(e){
+		if( e.keyCode === 32 ){
+			pause = !pause; $('#pause')[pause?'show':'hide']();
+		}else{
+			if(GAMEOVER==1)return;
+			var inverse_flag = 0;
+			keybound = e.keyCode - 38;
+			var x = head.x;
+			var y = head.y;
+			switch(keybound){
+				case -1:	if(dir==1)	{inverse_flag = 1;dir = 1;x--;break;}dir=-1;x--;break;	//左
+				case +1:	if(dir==-1)	{inverse_flag = 1;dir = -1;x++;break;}dir=1;x++;break;	//右
+				case 2: 	if(dir==0)	{inverse_flag = 1;dir = 0;y--;break;}dir=2;y++;break;	//下
+				case 0:		if(dir==2)	{inverse_flag = 1;dir = 2;y++;break;}dir=0;y--;break;	
+				break;
+				default: return;
+			}
+			if(inverse_flag==1){
+				//反方向什么也不做
+			}
+			else{
+				clearTimeout(timeOut);
+				if(head.eat(dir)=="eat"){
+					var node = new Snake_Block([x,y]);
+					node.show();
+					$(pix[x+y*18]).removeClass('x');
+					head.pre = node;
+					head = node;
+					randegg();
+				}
+				else if(head.eat(dir)=="die"){
+					$(".panel")[0].innerHTML ="GAME OVER";
+					GAMEOVER = 1;
+					return;
+				}
+				else{
+					var node = new Snake_Block([x,y]);
+					node.show();
+					head.pre = node;
+					head = node;
+					end.hide();
+					end = end.pre;
+				}
+				timeOut=setTimeout(run, 900/10 );
+			
+			}
+			
+		}
+	});
+
+	
+})(jQuery);
+
+
+</script>
+</body>
+</html>
+    	<style></style>
+	    		<script></script>
+	
+<!-- Generated by RunJS (Sat Nov 08 23:08:08 CST 2014) 2ms -->

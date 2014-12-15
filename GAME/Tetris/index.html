@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+<style>
+*{
+	margin: 0;
+	padding: 0;
+}
+#holder{
+	width: 280px;
+	margin: 20px auto;
+	background: #748b7b;
+	padding: 4px 2px 2px 4px;
+	border: 4px solid #333;
+}
+.doc{
+	width: 280px;
+	overflow: hidden;
+	position: relative;
+}
+.doc span{
+	position: absolute;
+	width: 14px;
+	height: 14px;
+	padding: 4px;
+	margin: 0 2px 2px 0;
+	background: #748b7b;
+	border: 2px solid #666;
+}
+.doc span i{
+	display: block;
+	width: 14px;
+	height: 14px;
+	background: #666;
+}
+.doc span.x, .doc span.X{
+	border-color: #000;
+}
+.doc span.x i,.doc span.X i{
+	background: #000;
+}
+.panel{
+	width: auto;
+	position: absolute;
+	left: 50%;
+	margin-left: 160px;
+	top: 20px;
+	line-height: 24px;
+}
+#pause{
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	background: rgba(6,6,6,.4);
+	color: #fff;
+	font: bold 72px/5 "Arial";
+	text-align: center;
+	display: none;
+}
+</style>
+</head>
+<body>
+<div id="holder">
+	<div id="doc" class="doc">
+		
+	</div>
+	<div class="panel">
+		<p><label for="score">得分: </label><em id="score">0</em></p>
+	</div>
+</div>
+<div id="pause">PAUSE</div>
+<script src="http://apps.bdimg.com/libs/jquery/1.9.0/jquery.min.js"></script>
+<script>
+//DREAMS come true
+//lovely
+(function($){
+	
+	var doc = $('#doc'), score = $('#score');
+	bg = [], height = 18;
+	doc.height( height*28 )
+	for (var i = 0; i < height; i++) {
+		for (var j = 0; j < 10; j++){
+			bg.push( 
+			'<span style="top:'+(i*28)+'px;left:'+(j*28)+'px;"><i></i></span>' );
+		}
+	};
+	doc.html( bg.join('') ); // 初始化背景
+	var pix = doc.children(); 
+	var types = [
+			['0010001000100010','0000000011110000','0010001000100010','0000000011110000'], // | & --
+			['0000000011000110','0000010011001000','0000000011000110','0000010011001000'], // z 
+			['0000000000110110','0000010001100010','0000000000110110','0000010001100010'], // 5
+			['0000010011100000','0000010001100100','0000000011100100','0000010011000100'], // T
+			['0010001001100000','0000010001110000','0000001100100010','0000011100010000'],
+			['0100010001100000','0000011101000000','0000011000100010','0000001011100000'],
+			['0000011001100000','0000011001100000','0000011001100000','0000011001100000'] 
+		];
+	function Block(){
+		this.x = 3;//列
+		this.y = -3;//
+		this.type = [Math.random()*7|0,Math.random()*4|0];
+		this.type_pre=[0,0];
+		
+		this.show = function(direction){
+			var type = types[ this.type[0] ][ this.type[1] ];
+			pix.removeClass('x');//先把所有的都清除掉	
+			for (var i = 0; i < type.length; i++) {
+				var x = this.x + (i % 4),
+					y = this.y + ((i / 4) | 0),
+					cls = type[i] === '1' ? 'x' : '';  //实心还是空心
+				
+				if( cls ){
+					if(x>9){this.x--;break;};
+					if((direction==1)&&$(pix[x+y*10]).hasClass('X')){this.x--;}
+					if(x<0){this.x++;break;};	
+					if((direction==-1)&&$(pix[x+y*10]).hasClass('X')){this.x++;}
+					if((direction==0)&&$(pix[x+y*10]).hasClass('X')){
+						
+						this.type[0]=this.type_pre[0];
+						this.type[1]=this.type_pre[1];
+						
+						type = types[ this.type[0] ][ this.type[1] ];
+						break;
+					}	
+				}
+			};
+			type = types[ this.type[0] ][ this.type[1] ];
+			for (var i = 0; i < type.length; i++) {
+				var x = this.x + (i % 4),
+					y = this.y + ((i / 4) | 0),
+					cls = type[i] === '1' ? 'x' : '';  //实心还是空心
+				cls && $(pix[x+y*10]).addClass( cls );
+				if( cls ){
+					//防止左右超出边界
+					if( (y>height-1) || $(pix[x+y*10]).hasClass('X') ){
+						return 'destory';
+					}
+					
+				}
+					//如果是实心的增加class
+			};
+			return true;
+		};
+
+		this.run = function(dir,up){
+			switch(dir){
+				case -1: this.x--;break;	//左
+				case +1: this.x++;break;	//右
+				case 2: this.y++;break;		//下
+				case -2: this.y--;break;	//上
+				case 0: var ll = types[this.type[0]].length; 
+				this.type_pre[0]=this.type[0];
+				this.type_pre[1]=this.type[1];
+				
+				this.type[1] = (this.type[1]+ll+(up||1)) % ll;
+				break;
+				default: return;
+			}
+			var direction=dir;
+			var show = this.show(direction);
+			if( !show && this.run && this.show ){
+				this.run(-dir,-1);
+			}else if( 'destory' === show ){
+				this.run(-dir,-1);//
+				this.destory();
+			}
+		};
+
+		this.destory = function(){
+			pix.filter('.x').addClass('X').removeClass('x');
+			this.show = null;
+			this.run = null;
+		};
+	}
+	var blo = new Block(), speed = 1, s = 0, timeOut, pause;
+	function run(){
+		if( pause ) {
+			// pause
+		}else if( blo.run && blo.show ){
+			blo.show();
+			blo.run( 2 );
+			var times = 1;
+			for (var i = 0; i < height; i++) {
+				var l = 0;
+				for (var j = 0; j < 10; j++){
+					if( $(pix[i*10+j]).hasClass('X') ){
+						l++;
+					}
+				}
+				if( l == 10 ){
+					for( var m = i; m > 3; m-- ){
+						for (var n = 0; n < 10; n++) {
+							pix[m*10+n].className = pix[m*10+n-10].className;
+						};
+					}
+					s += times*speed; score.html(s);
+					times += 2;
+				}
+			};
+			var ind = $('.X').first().index();
+			if( ind > -1 && ind < 50 ){
+				alert( 'Game over! \n Your score: '+ s );
+				clearTimeout( timeOut );
+			}
+		}else{
+			blo = new Block();
+		}
+		timeOut = setTimeout(run, 900/speed );
+	};
+	run();
+	
+	$(document).on('keydown', function(e){
+		if( e.keyCode === 32 ){
+			pause = !pause; $('#pause')[pause?'show':'hide']();
+		}else{
+			blo.run ? blo.run( e.keyCode - 38 ) : blo = new Block();
+		}
+	});
+
+	
+})(jQuery);
+
+
+</script>
+</body>
+</html>
+    	<style></style>
+	    		<script></script>
+	
+<!-- Generated by RunJS (Sat Nov 08 23:08:08 CST 2014) 2ms -->
