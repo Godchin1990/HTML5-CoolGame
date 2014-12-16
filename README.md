@@ -1,4 +1,5 @@
-游戏而已
+KFC合集游戏
+http://zhko11993.github.io/HTML5-CoolGame/
 ========
 
 ###1.Tetris
