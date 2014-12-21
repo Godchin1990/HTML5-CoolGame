@@ -9,5 +9,5 @@ http://zhko11993.github.io/HTML5-CoolGame/
 	基本完成
 	问题是连按改换方向不流畅
 	得分还能更完善
-###3.Speed Car
-	未启动
+###3.Car
+	开始启动

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+<style>
+*{
+	margin: 0;
+	padding: 0;
+}
+#holder{
+	width: 280px;
+	margin: 20px auto;
+	background: #748b7b;
+	padding: 4px 2px 2px 4px;
+	border: 4px solid #333;
+}
+.doc{
+	width: 280px;
+	overflow: hidden;
+	position: relative;
+}
+.doc span{
+	position: absolute;
+	width: 14px;
+	height: 14px;
+	padding: 4px;
+	margin: 0 2px 2px 0;
+	background: #748b7b;
+	border: 2px solid #666;
+}
+.doc span i{
+	display: block;
+	width: 14px;
+	height: 14px;
+	background: #666;
+}
+.doc span.x, .doc span.X,.doc span.X1,.doc span.X2{
+	border-color: #000;
+}
+.doc span.x i,.doc span.X i,.doc span.X1 i,.doc span.X2 i{
+	background: #000;
+}
+.panel{
+	width: auto;
+	position: absolute;
+	left: 50%;
+	margin-left: 160px;
+	top: 20px;
+	line-height: 24px;
+}
+#pause{
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	background: rgba(6,6,6,.4);
+	color: #fff;
+	font: bold 72px/5 "Arial";
+	text-align: center;
+	display: none;
+}
+</style>
+</head>
+<body>
+<div id="holder">
+	<div id="doc" class="doc">
+		
+	</div>
+	<div class="panel">
+		<p><label for="score">得分: </label><em id="score">0</em></p>
+	</div>
+</div>
+<div id="pause">PAUSE</div>
+<script src="http://apps.bdimg.com/libs/jquery/1.9.0/jquery.min.js"></script>
+<script>
+
+(function($){
+	
+	var doc = $('#doc'), score = $('#score');
+	bg = [], height = 18;
+	doc.height( height*28 )
+	for (var i = 0; i < height; i++) {
+		for (var j = 0; j < 10; j++){
+			bg.push( 
+			'<span style="top:'+(i*28)+'px;left:'+(j*28)+'px;"><i></i></span>' );
+		}
+	};
+	doc.html( bg.join('') ); // 初始化背景
+	var pix = doc.children(); 
+	var car_type  = '010111010111';
+	var cars_type = ['000','001','010','011'
+					,'100','101','110'];
+	var speed = 15;
+	gameover = 0;
+	function MyCar(){
+		this.x = 0;
+		this.y = 14;
+		this.show = function(direction){
+			console.log(this.x);
+			if(direction==-1&&this.x>0)this.x = this.x - 3;
+			if(direction==1&&this.x<6)this.x  = this.x + 3;
+			var type = car_type;
+			pix.removeClass('x');//先把所有的都清除掉	
+			for (var i = 0; i < type.length; i++) {
+				var x = this.x + (i % 3),
+				y = this.y + ((i / 3) | 0),
+				cls = type[i] === '1' ? 'x' : '';  //实心还是空心
+				cls && $(pix[x+y*10]).addClass( cls )
+			};
+		}
+	}
+	me = new MyCar();
+	me.show();
+	function Road(){
+		this.x = 0;
+		this.y = -4;
+		this.run = function(){
+			if(this.y>18)this.destory();
+			this.y++;
+			pix.removeClass(car_number);//先把所有的都清除掉	
+			for (var i = 0; i < this.type.length; i++) {
+				if(this.type[i]=='1'){
+					for (var j = 0; j < type.length; j++) {
+						var x = this.x+i*3+ (j % 3),
+						y = this.y + ((j / 3) | 0),
+						cls = type[j] === '1' ? car_number : '';  //实心还是空心
+						cls && $(pix[x+y*10]).addClass( cls )
+					};
+				}
+			};
+		}
+		this.destory = function(){
+			//pix.filter('.x').addClass('X').removeClass('x');
+			this.show = null;
+			this.run = null;
+		};
+	}
+	function Cars(car_number){
+		this.car = car_number;
+		this.win = 0;
+		this.x = 0;
+		this.y = -4;
+		this.type = cars_type[Math.floor(Math.random()*7)];
+		this.show = function(){
+			var type = car_type;
+			//pix.removeClass('x');//先把所有的都清除掉	
+			for (var i = 0; i < this.type.length; i++) {
+				if(this.type[i]=='1'){
+					for (var j = 0; j < type.length; j++) {
+						var x = this.x+i*3+ (j % 3),
+						y = this.y + ((j / 3) | 0),
+						cls = type[j] === '1' ? car_number : '';  //实心还是空心
+						cls && $(pix[x+(y)*10]).addClass( cls )
+					};
+				}
+			};
+		}
+		this.run = function(){
+			if(this.y>18)this.destory();
+			this.y++;
+			var type = car_type;
+			pix.removeClass(car_number);//先把所有的都清除掉	
+			for (var i = 0; i < this.type.length; i++) {
+				if(this.type[i]=='1'){
+					for (var j = 0; j < type.length; j++) {
+						var x = this.x+i*3+ (j % 3),
+						y = this.y + ((j / 3) | 0),
+						cls = type[j] === '1' ? car_number : '';  //实心还是空心
+						cls && $(pix[x+y*10]).addClass( cls )
+					};
+				}
+			};
+		}
+		this.crash = function(){
+			if(this.y>18)this.destory();
+			var type = car_type;
+			for (var i = 0; i < this.type.length; i++) {
+				if(this.type[i]=='1'){
+					for (var j = 0; j < type.length; j++) {
+						var x = this.x+i*3+ (j % 3),
+						y = this.y + ((j / 3) | 0);
+						if($(pix[x+(y)*10]).hasClass( 'x' )){
+							return 'crash';
+						}
+					};
+				}
+			};
+			return 'go';
+		}
+		this.destory = function(){
+			//pix.filter('.x').addClass('X').removeClass('x');
+			this.win = 1;
+			this.show = null;
+			this.run = null;
+		};
+	}
+	cars_type_X = ['X','X1','X2'];
+	cars_type_X_i = 0;
+	cars_number = 0;
+	cars =[];
+	cars_youwin = 0;
+	function run(){
+		$('#score').text(cars_youwin);
+		if(cars.length!=0){
+			if( cars[cars_youwin].crash()=='crash') {
+			gameover = 1;
+			return;
+			// pause
+			}
+		}
+		
+		if(cars_number%9==0){
+			car1 = new Cars(cars_type_X[cars_type_X_i]);
+			cars.push(car1);
+			
+			cars_type_X_i++;
+			if(cars_type_X_i==3)cars_type_X_i=0;
+		}
+		for(var i=cars_youwin;i<cars.length;i++){
+			if(cars[i].win==0){
+				cars[i].run();
+			}
+			else{
+				cars_youwin++;
+			}
+		}
+		cars_number++;
+		timeOut = setTimeout(run, 900/speed );
+	};
+	
+	function end(){
+		if( gameover==1 ) {
+			for(var i=cars_youwin;i<cars.length;i++){
+			cars[i].destory();
+			}
+		}
+		timeOut3 = setTimeout(end, 900/speed );
+	};
+	run();
+	end();
+	$(document).on('keydown', function(e){
+		console.log(e.keyCode-38);
+		if( e.keyCode === 32 ){
+			pause = !pause; $('#pause')[pause?'show':'hide']();
+		}else{
+			me.show( e.keyCode - 38 );
+		}
+	});
+
+	
+})(jQuery);
+
+
+</script>
+</body>
+</html>
+    	<style></style>
+	    		<script></script>
+	
+<!-- Generated by RunJS (Sat Nov 08 23:08:08 CST 2014) 2ms -->
