@@ -225,7 +225,7 @@
 			}
 		}
 		cars_number++;
-		timeOut = setTimeout(run, 900/speed );
+		timeOut = setTimeout(run, 900/cars_youwin );
 	};
 	
 	function end(){
@@ -234,7 +234,7 @@
 			cars[i].destory();
 			}
 		}
-		timeOut3 = setTimeout(end, 900/speed );
+		timeOut3 = setTimeout(end, 900/cars_youwin );
 	};
 	run();
 	end();
