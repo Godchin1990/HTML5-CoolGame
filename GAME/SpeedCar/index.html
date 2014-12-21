@@ -98,7 +98,7 @@
 	var car_type  = '010111010111';
 	var cars_type = ['000','001','010','011'
 					,'100','101','110'];
-	var speed = 30;
+	var speed = 10;
 	gameover = 0;
 	function MyCar(){
 		this.x = 0;
@@ -196,9 +196,10 @@
 	cars_type_X_i = 0;
 	cars_number = 0;
 	cars =[];
-	cars_youwin = 1;
+	cars_youwin = 0;
+	//speed  = cars_youwin;
 	function run(){
-		$('#score').text(cars_youwin-1);
+		$('#score').text(cars_youwin);
 		if(cars.length!=0){
 			if( cars[cars_youwin].crash()=='crash') {
 			gameover = 1;
@@ -206,11 +207,9 @@
 			// pause
 			}
 		}
-		
 		if(cars_number%9==0){
 			car1 = new Cars(cars_type_X[cars_type_X_i]);
 			cars.push(car1);
-			
 			cars_type_X_i++;
 			if(cars_type_X_i==3)cars_type_X_i=0;
 		}
@@ -225,7 +224,7 @@
 			}
 		}
 		cars_number++;
-		timeOut = setTimeout(run, 900/cars_youwin );
+		timeOut = setTimeout(run, 900/(speed) );
 	};
 	
 	function end(){
@@ -234,19 +233,28 @@
 			cars[i].destory();
 			}
 		}
-		timeOut3 = setTimeout(end, 900/cars_youwin );
+		timeOut3 = setTimeout(end, 900/(speed) );
 	};
 	run();
 	end();
 	$(document).on('keydown', function(e){
 		console.log(e.keyCode-38);
 		if( e.keyCode === 32 ){
-			pause = !pause; $('#pause')[pause?'show':'hide']();
+			speed = 20 ;
+
+			//pause = !pause; $('#pause')[pause?'show':'hide']();
 		}else{
 			me.show( e.keyCode - 38 );
 		}
 	});
-
+	$(document).on('keyup', function(e){
+		console.log(e.keyCode-38);
+		if( e.keyCode === 32 ){
+			speed = 10;
+			//pause = !pause; $('#pause')[pause?'show':'hide']();
+		}
+	});
+onkeydown
 	
 })(jQuery);
 
