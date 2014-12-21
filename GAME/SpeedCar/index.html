@@ -196,9 +196,9 @@
 	cars_type_X_i = 0;
 	cars_number = 0;
 	cars =[];
-	cars_youwin = 0;
+	cars_youwin = 1;
 	function run(){
-		$('#score').text(cars_youwin);
+		$('#score').text(cars_youwin-1);
 		if(cars.length!=0){
 			if( cars[cars_youwin].crash()=='crash') {
 			gameover = 1;
