@@ -98,7 +98,7 @@
 	var car_type  = '010111010111';
 	var cars_type = ['000','001','010','011'
 					,'100','101','110'];
-	var speed = 30;
+	var speed = 10;
 	gameover = 0;
 	function MyCar(){
 		this.x = 0;
@@ -240,7 +240,7 @@
 	$(document).on('keydown', function(e){
 		console.log(e.keyCode-38);
 		if( e.keyCode === 32 ){
-			speed = 30 ;
+			speed = 20 ;
 
 			//pause = !pause; $('#pause')[pause?'show':'hide']();
 		}else{
@@ -250,7 +250,7 @@
 	$(document).on('keyup', function(e){
 		console.log(e.keyCode-38);
 		if( e.keyCode === 32 ){
-			speed = 30;
+			speed = 10;
 			//pause = !pause; $('#pause')[pause?'show':'hide']();
 		}
 	});
