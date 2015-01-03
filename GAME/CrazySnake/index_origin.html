@@ -138,6 +138,7 @@
 	var nodes = [];
 	dir = -1;
 	dir_pre = -1;
+    egg = 0;
 	run();
 	randegg();
 	
@@ -150,7 +151,7 @@
 			var y = Math.floor(Math.random()*17);
 		}
 		$(pix[x+y*18]).addClass('x');
-		$(".panel")[0].innerHTML=x+' '+y;
+		$(".panel")[0].innerHTML= "第"+egg+"蛋";
 		return;
 			
 	}
@@ -174,10 +175,11 @@
 			$(pix[x+y*18]).removeClass('x');
 			head.pre = node;
 			head = node;
+            egg ++;
 			randegg();
 		}
 		else if(head.eat(dir)=="die"){
-			$(".panel")[0].innerHTML = "GAME OVER";
+			$(".panel")[0].innerHTML = "第"+egg+"蛋<br>GAME OVER<br>";
 			GAMEOVER = 1;
 			return;
 		}
@@ -215,6 +217,7 @@
 			else{
 				clearTimeout(timeOut);
 				if(head.eat(dir)=="eat"){
+                   
 					var node = new Snake_Block([x,y]);
 					node.show();
 					$(pix[x+y*18]).removeClass('x');
@@ -223,7 +226,7 @@
 					randegg();
 				}
 				else if(head.eat(dir)=="die"){
-					$(".panel")[0].innerHTML ="GAME OVER";
+					$(".panel")[0].innerHTML = "第"+egg+"蛋<br>GAME OVER<br>";
 					GAMEOVER = 1;
 					return;
 				}
