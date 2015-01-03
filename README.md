@@ -8,7 +8,6 @@ http://zhko11993.github.io/HTML5-CoolGame/
 ###2.CrazySnake
 	基本完成
 	问题是连按改换方向不流畅
-	得分还能更完善
 ###3.SpeedCar
 	基本完成，一开头就是地狱模式
 	加速键尚未开启
