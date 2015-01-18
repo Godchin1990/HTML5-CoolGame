@@ -1,6 +1,6 @@
 游戏
 ========
-http://zhko11993.github.io/HTML5-CoolGame/
+http://zhko1.github.io/HTML5-CoolGame/
 ###1.Tetris
 	基本完成
 	留有消除一行时上方的下降方块留下残影的bug
