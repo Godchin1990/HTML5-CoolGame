@@ -14,3 +14,5 @@ http://zhko1.github.io/HTML5-CoolGame/
 ###4.SpeedCar_easy
 	基本完成
 	按空格加速
+###5.HERO_OR_COWARD
+	开始启动
