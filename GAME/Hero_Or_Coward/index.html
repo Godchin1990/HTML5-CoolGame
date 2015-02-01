@@ -88,8 +88,17 @@
 		}
 	};
 	doc.html( bg.join('') ); // 初始化背景
-	var pix = doc.children(); 
-	
+	pix = doc.children(); 
+	var x_;//这段显示方格的编号
+	for(x_ = 0;x_<180;x_++){
+		pix[x_].number = x_;
+		$(pix[x_]).click(function(){
+			//alert(this.number);
+			//$(this).addClass('X3')
+			//score[0].innerHTML += this.number+','
+		});
+		
+	}
 	gameover = 0;
 	function Me(){				//我到底是英雄还是软蛋？
 		this.x = 0;
@@ -215,7 +224,7 @@
 			timeOut = setTimeout(run, 1000 );
 		}
 	};
-	
+
 	function end(){
 		if( gameover==1 ) {
 			for(var i=cars_youwin;i<cars.length;i++){
@@ -229,10 +238,33 @@
 		pix.removeClass("X");
 		pix.removeClass("X1");
 		pix.removeClass("X2");
-		write()
-		$(pix[i+j*10]).addClass('X2');
+		write_gameover(0);
+	//	write_gameover_add(180);
+	//	write_gameover_reduce(0);
 	};
 	
+	var lose_show = [23,22,21,20,30,40,50,60,61,62,63,53,43,42,29,28,27,26,36,46,56,66,67,68,69,59,49,48]
+	
+	function write_gameover(i){
+		$(pix[lose_show[i++]]).addClass('X3');
+		if(i!=-1){
+			timeOut = setTimeout(function(){write_gameover(i)}, 100);
+		}
+	};
+
+	function write_gameover_add(i){
+		$(pix[i--]).addClass('X3');
+		if(i!=-1){
+			timeOut = setTimeout(function(){write_gameover_add(i)}, 100);
+		}
+	};
+
+	function write_gameover_reduce(i){
+		$(pix[i++]).addClass('X3');
+		if(i!=180){
+			timeOut = setTimeout(function(){write_gameover_reduce(i)}, 100);
+		}
+	};
 	run();
 	//end();
 	$(document).on('keydown', function(e){
