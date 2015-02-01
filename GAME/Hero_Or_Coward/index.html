@@ -173,6 +173,7 @@
 			var that = this;
 			if(that.y == 18){
 				that.destory();
+				gameover = 1;
 				return;
 			}
 			var that = this;
@@ -207,7 +208,12 @@
 		var enemy = new RowEnemy();
 		enemy.init();
 		enemy.run();
-		timeOut = setTimeout(run, 1000 );
+		if(gameover == 1){
+			gameover_();
+		}
+		else{
+			timeOut = setTimeout(run, 1000 );
+		}
 	};
 	
 	function end(){
@@ -218,6 +224,15 @@
 		}
 		timeOut3 = setTimeout(end, 900/(speed) );
 	};
+	function gameover_(){
+		pix.removeClass("x");
+		pix.removeClass("X");
+		pix.removeClass("X1");
+		pix.removeClass("X2");
+		write()
+		$(pix[i+j*10]).addClass('X2');
+	};
+	
 	run();
 	//end();
 	$(document).on('keydown', function(e){
